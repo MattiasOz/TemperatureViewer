@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  database:
+    image: mysql:latest
+    container_name: temperature_database
+    environment:
+      MYSQL_ROOT_PASSWORD: bob
+      MYSQL_DATABASE: temperature_database
+      MYSQL_USER: bob
+      MYSQL_PASSWORD: bob
+    networks:
+      - my_network
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: dockerfile
+    container_name: my_backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - database
+    networks:
+      - my_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dockerfile.frontend
+    container_name: my_frontend
+    ports:
+      - "80:80"
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
