@@ -1,5 +1,7 @@
 FROM node:14
 
+RUN apt update && apt install -y netcat
+
 WORKDIR /app
 
 COPY package*.json ./
@@ -8,6 +10,11 @@ RUN npm install
 
 COPY . .
 
+COPY wait_for_it.sh /wait_for_it.sh
+
+RUN chmod +x /wait_for_it.sh
+
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+# CMD ["node", "server.js"]
+CMD ["./wait_for_it.sh", "database", "3306", "--", "node", "server.js"]

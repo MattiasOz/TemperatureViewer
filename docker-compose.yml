@@ -1,5 +1,9 @@
 version: '3.8'
 
+volumes:
+  mysql_data:
+
+
 services:
   database:
     image: mysql:latest
@@ -9,6 +13,8 @@ services:
       MYSQL_DATABASE: temperature_database
       MYSQL_USER: bob
       MYSQL_PASSWORD: bob
+    volumes:
+      - mysql_data:/var/lib/mysql
     networks:
       - my_network
 

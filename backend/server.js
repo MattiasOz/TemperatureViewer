@@ -10,7 +10,7 @@ app.use(cors());
 
 const sequelize = new Sequelize('temperature_database', 'bob', 'bob', 
   {
-    host: 'temperature_database',
+    host: 'database',
     dialect: 'mysql'
   }
 );
@@ -37,7 +37,9 @@ const Entry = sequelize.define(
   }
 );
 
-sequelize.sync();
+sequelize.sync()
+  .then(() => console.log('Database synced...'))
+  .catch(err => console.log('Failed database sync: ' + err));
 
 app.post(
   '/entries', 
