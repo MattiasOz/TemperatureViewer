@@ -6,7 +6,9 @@ const app = express();
 const port = 3000;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: '*',
+}));
 
 const sequelize = new Sequelize('temperature_database', 'bob', 'bob', 
   {
@@ -33,7 +35,7 @@ const Entry = sequelize.define(
     temperature: {
       type: DataTypes.STRING,
       allowNull: false,
-    }
+    }   //TODO: add moisture and stuff
   }
 );
 

@@ -7,7 +7,11 @@
 </head>
 
 <script>
-  const backendUrl = "http://localhost:3000/entries"
+  // import { backendUrl } from 'env.js';
+  // const backendUrl = process.env.backendUrl;
+ // const backendUrl = window.env.backendUrl;
+
+  var backendUrl = "http://192.168.0.211:3000/entries";
 
   async function refresh() {
     const response = await fetch(backendUrl);
@@ -21,6 +25,7 @@
       uiList.appendChild(listItem);
     });
   }
+
   refresh();
 </script>
 

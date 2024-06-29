@@ -16,7 +16,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - my_network
+      - temperature_network
 
   backend:
     build: 
@@ -28,7 +28,7 @@ services:
     depends_on:
       - database
     networks:
-      - my_network
+      - temperature_network
 
   frontend:
     build:
@@ -38,8 +38,8 @@ services:
     ports:
       - "80:80"
     networks:
-      - my_network
+      - temperature_network
 
 networks:
-  my_network:
+  temperature_network:
     driver: bridge
