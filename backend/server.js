@@ -35,7 +35,15 @@ const Entry = sequelize.define(
     temperature: {
       type: DataTypes.STRING,
       allowNull: false,
-    }   //TODO: add moisture and stuff
+    },
+    humidity: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    perceived_temperature: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    }
   }
 );
 
@@ -47,8 +55,8 @@ app.post(
   '/entries', 
   async (req, res) => {
     try {
-      const { time, temperature } = req.body;
-      const newEntry = await Entry.create({time, temperature});
+      const { time, temperature, humidity, perceived_temperature } = req.body;
+      const newEntry = await Entry.create({time, temperature, humidity, perceived_temperature});
       res.status(201).json(newEntry);
     } catch (error) {
       console.error(error);

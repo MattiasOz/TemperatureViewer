@@ -21,7 +21,25 @@
     uiList.innerHTML = "";
     entries.forEach(entry => {
       const listItem = document.createElement('li');
-      listItem.textContent = `time: ${entry.time} temp: ${entry.temperature}`;
+      try {
+        var date = new Date(entry.time);
+
+        // Hours part from the timestamp
+        var hours = date.getHours();
+
+        // Minutes part from the timestamp
+        var minutes = "0" + date.getMinutes();
+
+        // Seconds part from the timestamp
+        var seconds = "0" + date.getSeconds();
+
+        // Will display time in 10:30:23 format
+        var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+
+        listItem.textContent = `time: ${formattedTime} temp: ${entry.temperature} humidity: ${entry.humidity} perceived temperature: ${entry.perceived_temperature}`;
+      } catch (e) {
+        console.log("Skipping entry");
+      }
       uiList.appendChild(listItem);
     });
   }
