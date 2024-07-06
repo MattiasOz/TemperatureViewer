@@ -15,17 +15,36 @@
   // ==================
 
   var tempChart;
+  var specifier = "";
 
   document.addEventListener('DOMContentLoaded', async function () {
     await refreshAll();
 
     document.getElementById("refreshButton").addEventListener('click', refreshAll);
+    document.getElementById("getAllButton").addEventListener('click', setAll);
+    document.getElementById("get24hButton").addEventListener('click', set24h);
+    document.getElementById("get7dButton").addEventListener('click', set7d);
 
     setInterval(refreshAll, updateIntervalSec * 1000);
   });
 
+  async function setAll(){
+    specifier = "";
+    await refreshAll();
+  }
+
+  async function set24h(){
+    specifier = "/24h";
+    await refreshAll();
+  }
+
+  async function set7d(){
+    specifier = "/7d";
+    await refreshAll();
+  }
+
   async function refreshAll(){
-    const response = await fetch(backendUrl);
+    const response = await fetch(backendUrl + specifier);
     const entries = await response.json();
 
     updateGraph(entries);
@@ -64,7 +83,12 @@
   function updateGraph(entries) {
     // const time = entries.map(entry => entry.time);
     const dates = entries.map(entry => new Date(entry.time * 1000));
-    const timeEntries = dates.map(date => `${date.getHours()}:${('0'+date.getMinutes()).substr(-2)}`);
+    var timeEntries;
+    if (specifier == "/24h"){
+      timeEntries = dates.map(date => `${date.getHours()}:${('0'+date.getMinutes()).substr(-2)}`);
+    } else {
+      timeEntries = dates.map(date => `${date.getFullYear()}/${date.getMonth()}/${date.getDate()} ${date.getHours()}:${('0'+date.getMinutes()).substr(-2)}`)
+    }
 
     const temperature = entries.map(entry => entry.temperature);
     const humidity = entries.map(entry => entry.humidity);
@@ -195,7 +219,10 @@
 
 <body>
     <h1>Temperature Viewer</h1>
-    <button id="refreshButton">Refresh</Button>
+    <button id="refreshButton">Refresh</button>
+    <button id="getAllButton">All</button>
+    <button id="get24hButton">24 Hours</button>
+    <button id="get7dButton">7 days</button>
     <p>Welcome to my app.</p>
     <canvas id="temperatureChart"></canvas>
     <!-- <canvas id="§umidityChart"></canvas> -->

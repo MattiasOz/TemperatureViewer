@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize, DataTypes, Op } = require('sequelize');
 
 const app = express();
 const port = 3000;
@@ -69,14 +69,68 @@ app.get(
   '/entries',
   async (req, res) => {
     try {
-      const entries = await Entry.findAll();
+      const query = {
+        order: [
+          ['createdAt', 'ASC']
+        ]
+      };
+      const entries = await Entry.findAll(query);
       res.status(200).json(entries);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'failed to get entries\n' + error});
     }
   }
-)
+);
+
+app.get(
+  '/entries/24h',
+  async (req, res) => {
+    try {
+      const lastday = new Date(new Date() - 24*60*60*1000);
+      const query = {
+        where: {
+          createdAt: {
+            [Op.gte]: lastday
+          }
+        },
+        order: [
+          ['createdAt', 'ASC']
+        ]
+      };
+      const entries = await Entry.findAll(query);
+      res.json(entries);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'failed to get entries\n' + error});
+    }
+  }
+);
+
+
+app.get(
+  '/entries/7d',
+  async (req, res) => {
+    try {
+      const lastday = new Date(new Date() - 7*24*60*60*1000);
+      const query = {
+        where: {
+          createdAt: {
+            [Op.gte]: lastday
+          }
+        },
+        order: [
+          ['createdAt', 'ASC']
+        ]
+      };
+      const entries = await Entry.findAll(query);
+      res.json(entries);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'failed to get entries\n' + error});
+    }
+  }
+);
 
 // insertIntoDb(2525);
 // getDb();
