@@ -10,27 +10,29 @@
 <!-- <script src="./script.js"></script> -->
 <script>
   // EDITABLE VARIABLES
-  const backendUrl = "http://192.168.0.212:3000/entries";
+  const backendUrl = "http://192.168.1.9:3000/entries";
   const updateIntervalSec = 60;
   // ==================
 
   var tempChart;
 
   document.addEventListener('DOMContentLoaded', async function () {
-    await refresh();
-    await updateGraph();
+    await refreshAll();
 
-    document.getElementById("refreshButton").addEventListener('click', refresh);
-    document.getElementById("refreshButton").addEventListener('click', updateGraph);
+    document.getElementById("refreshButton").addEventListener('click', refreshAll);
 
-    setInterval(refresh, updateIntervalSec * 1000);
-    setInterval(updateGraph, updateIntervalSec * 1000);
+    setInterval(refreshAll, updateIntervalSec * 1000);
   });
 
-
-  async function refresh() {
+  async function refreshAll(){
     const response = await fetch(backendUrl);
     const entries = await response.json();
+
+    updateGraph(entries);
+    updatelist(entries);
+  }
+
+  function updatelist(entries) {
     const uiList = document.getElementById("testList");
 
     uiList.innerHTML = "";
@@ -59,90 +61,120 @@
     });
   }
 
-  async function updateGraph() {
-    const response = await fetch(backendUrl);
-    const entries = await response.json();
+  function updateGraph(entries) {
+    // const time = entries.map(entry => entry.time);
+    const dates = entries.map(entry => new Date(entry.time * 1000));
+    const timeEntries = dates.map(date => `${date.getHours()}:${('0'+date.getMinutes()).substr(-2)}`);
 
-    const time = entries.map(entry => entry.time);
     const temperature = entries.map(entry => entry.temperature);
     const humidity = entries.map(entry => entry.humidity);
     const perceived_temperature = entries.map(entry => entry.perceived_temperature);
 
     if (tempChart) {
-      tempChart.data.labels = time;
+      tempChart.data.labels = timeEntries;
       tempChart.data.datasets[0].data = temperature;
       tempChart.data.datasets[1].data = perceived_temperature;
       tempChart.data.datasets[2].data = humidity;
+      //console.log(tempChart.options.scales.B.position)
+      //tempChart.options.scales.B.position = (tempChart.options.scales.B.position == 'left') ? 'right' : 'top';
       tempChart.update();
     } else {
       const ctx = document.getElementById('temperatureChart').getContext('2d');
 
-      tempChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: time,
-          datasets: [
-            {
-              label: 'Temperature',
-              yAxisID: 'A',
-              data: temperature,
-              borderColor: 'rgba(75, 192, 192, 1)',
-              backgroundColor: 'rgba(75, 192, 192, 0.2)',
-              fill: false
-            },
-            {
-              label: 'Perceived Temperature',
-              yAxisID: 'A',
-              data: perceived_temperature,
-              borderColor: 'rgba(153, 102, 255, 1)',
-              backgroundColor: 'rgba(153, 102, 255, 0.2)',
-              fill: false
-            },
-            {
-              label: 'Humidity',
-              yAxisID: 'B',
-              data: humidity,
-              borderColor: 'rgba(74, 191, 93, 1)',
-              backgroundColor: 'rgba(75, 192, 192, 0.2)',
-              fill: false
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            'A': {
-              type: 'linear',
-              position: 'left',
-              title: {
-                display: true,
-                text: 'Temperature (℃)'
+      tempChart = new Chart(ctx, 
+        {
+          type: 'line',
+          data: {
+            labels: timeEntries,
+            datasets: [
+              {
+                label: 'Temperature',
+                color: '#ffffff',
+                yAxisID: 'A',
+                data: temperature,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: false,
+                hidden: true
               },
-              suggestedMin: 0
-            },
-            'B': {
-              type: 'linear',
-              position: 'right',
-              title: {
-                display: true,
-                text: 'Humidity (%)',
-                color: 'rgba(74, 191, 93, 1)',
+              {
+                label: 'Perceived Temperature',
+                yAxisID: 'A',
+                data: perceived_temperature,
+                borderColor: 'rgba(153, 102, 255, 1)',
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                fill: true
               },
-              min: 0,
-              max: 100,
-              ticks: {
-                color: 'rgba(74, 191, 93, 1)',
+              {
+                label: 'Humidity',
+                yAxisID: 'B',
+                data: humidity,
+                borderColor: 'rgba(104, 221, 123, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                labels: {
+                  color: 'white'
+                }
               }
             },
-            x: {
-              title: {
-                display: true,
-                text: 'Time'
+            scales: {
+              'A': {
+                type: 'linear',
+                position: 'left',
+                title: {
+                  display: true,
+                  text: 'Temperature (℃)',
+                  color: '#ffffff'
+                },
+                ticks: {
+                  color: '#ffffff'
+                },
+                grid: {
+                  color: "#aaaaaa"
+                },
+                suggestedMin: 0
+              },
+              'B': {
+                type: 'linear',
+                position: 'right',
+                title: {
+                  display: true,
+                  text: 'Humidity (%)',
+                  color: 'rgba(104, 221, 123, 1)',
+                },
+                min: 0,
+                max: 100,
+                ticks: {
+                  color: 'rgba(104, 221, 123, 1)',
+                },
+                grid: {
+                  color: "#aaaaaa"
+                },
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: 'Time',
+                  color: "#ffffff"
+                },
+                ticks: {
+                  color: "#ffffff"
+                },
+                grid: {
+                  color: "#aaaaaa"
+                },
               }
-            }
+            },
           }
         }
-      });
+      );
     }
   }
 </script>
@@ -155,6 +187,10 @@
     float: left;
   }
   */
+  body {
+    background-color: #333333;
+    color: #ffffff;
+  }
 </style>
 
 <body>
