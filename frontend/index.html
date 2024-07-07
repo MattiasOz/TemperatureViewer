@@ -84,6 +84,7 @@
         var formattedTemperatuere;
         var formattedHumidity;
         var formattedPercTemp;
+        // I don't know why this is different on different computers but whatever
         try {
           formattedTemperatuere = `${entry.temperature.substr(0,4)} ℃`;
         } catch (e) {
@@ -136,6 +137,7 @@
     } else {
       const ctx = document.getElementById('temperatureChart').getContext('2d');
 
+      console.log(screen.availWidth/screen.availHeight +0.5); // There's no math behind this. Just trail and error
       tempChart = new Chart(ctx, 
         {
           type: 'line',
@@ -173,7 +175,7 @@
           },
           options: {
             responsive: true,
-            aspectRatio: 16/6,
+            aspectRatio: screen.availWidth/screen.availHeight + 0.5,
             plugins: {
               legend: {
                 labels: {
