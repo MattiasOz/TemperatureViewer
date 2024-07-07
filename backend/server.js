@@ -132,6 +132,30 @@ app.get(
   }
 );
 
+app.get(
+  '/entries/30d',
+  async (req, res) => {
+    try {
+      const lastday = new Date(new Date() - 30*24*60*60*1000);
+      const query = {
+        where: {
+          createdAt: {
+            [Op.gte]: lastday
+          }
+        },
+        order: [
+          ['createdAt', 'ASC']
+        ]
+      };
+      const entries = await Entry.findAll(query);
+      res.json(entries);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'failed to get entries\n' + error});
+    }
+  }
+);
+
 // insertIntoDb(2525);
 // getDb();
 
