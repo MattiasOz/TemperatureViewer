@@ -81,26 +81,29 @@
         // Will display time in 10:30:23 format
         var formattedTime = `${date.getFullYear()}/${date.getMonth()}/${date.getDate()} ${date.getHours()}:${('0'+date.getMinutes()).substr(-2)}`;
 
+        var formattedTemperatuere;
+        var formattedHumidity;
+        var formattedPercTemp;
         try {
-          tableRow.insertCell().appendChild(document.createTextNode(`${formattedTime}`));
+          formattedTemperatuere = `${entry.temperature.substr(0,4)} ℃`;
         } catch (e) {
-          tableRow.insertCell().appendChild(document.createTextNode(`${formattedTime}`));
+          formattedTemperatuere = `${entry.temperature.toFixed(1)} ℃`;
         }
         try {
-          tableRow.insertCell().appendChild(document.createTextNode(`${entry.temperature.substr(0,4)} ℃`));
+          formattedHumidity = `${entry.humidity.substr(0,4)}%`;
         } catch (e) {
-          tableRow.insertCell().appendChild(document.createTextNode(`${entry.temperature.toFixed(1)} ℃`));
+          formattedHumidity = `${entry.humidity.toFixed(1)}%`;
         }
         try {
-          tableRow.insertCell().appendChild(document.createTextNode(`${entry.humidity.substr(0,4)}%`));
+          formattedPercTemp = `${entry.perceived_temperature.substr(0,4)} ℃`;
         } catch (e) {
-          tableRow.insertCell().appendChild(document.createTextNode(`${entry.humidity.toFixed(1)}%`));
+          formattedPercTemp = `${entry.perceived_temperature.toFixed(1)} ℃`;
         }
-        try {
-          tableRow.insertCell().appendChild(document.createTextNode(`${entry.perceived_temperature.substr(0,4)} ℃`));
-        } catch (e) {
-          tableRow.insertCell().appendChild(document.createTextNode(`${entry.perceived_temperature.toFixed(1)} ℃`));
-        }
+        tableRow.insertCell().appendChild(document.createTextNode(formattedTime));
+        tableRow.insertCell().appendChild(document.createTextNode(formattedTemperatuere));
+        tableRow.insertCell().appendChild(document.createTextNode(formattedHumidity));
+        tableRow.insertCell().appendChild(document.createTextNode(formattedPercTemp));
+
 
       } catch (e) {
         console.log("Skipping entry due to:\n" + e);
