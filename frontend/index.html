@@ -10,10 +10,13 @@
 <!-- <script src="./script.js"></script> -->
 <script>
   // EDITABLE VARIABLES
-  const backendUrl = "http://192.168.1.9:3000/entries";
+  const backendUrl = "http://192.168.0.212:3000/entries";
   const updateIntervalSec = 60;
   // ==================
 
+  const humidityColor = 'rgba(104, 221, 123, 1)';
+  const weekdaysMap = {0: 'Monday', 1: 'Tuesday', 2: 'Wednesday', 3: 'Thursday', 4: 'Friday', 5: 'Saturday', 6: 'Sunday'};
+  const monthsMap = {0: 'January', 1: 'February', 2: 'Mars', 3: 'April', 4: 'May', 5: 'June', 6: 'July', 7: 'August', 8: 'September', 9: 'October', 10: 'November', 11: 'December'};
   var tempChart;
   var specifier = "";
 
@@ -84,7 +87,7 @@
         tableRow.insertCell().appendChild(document.createTextNode(`${entry.perceived_temperature.substr(0,4)} ℃`));
 
       } catch (e) {
-        console.log("Skipping entry");
+        console.log("Skipping entry due to:\n" + e);
       }
     });
   }
@@ -96,6 +99,7 @@
       timeEntries = dates.map(date => `${date.getHours()}:${('0'+date.getMinutes()).substr(-2)}`);
     } else {
       timeEntries = dates.map(date => `${date.getFullYear()}/${date.getMonth()}/${date.getDate()} ${date.getHours()}:${('0'+date.getMinutes()).substr(-2)}`)
+      timeEntries = dates.map(date => `${date.getDate()} ${monthsMap[date.getMonth()]}  ${date.getHours()}:${('0'+date.getMinutes()).substr(-2)}`)
     }
 
     const temperature = entries.map(entry => entry.temperature);
@@ -126,7 +130,7 @@
                 data: temperature,
                 borderColor: 'rgba(75, 192, 192, 1)',
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                fill: false,
+                fill: true,
                 hidden: true
               },
               {
@@ -141,14 +145,16 @@
                 label: 'Humidity',
                 yAxisID: 'B',
                 data: humidity,
-                borderColor: 'rgba(104, 221, 123, 1)',
+                borderColor: humidityColor,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                fill: false
+                fill: false,
+                hidden: true
               }
             ]
           },
           options: {
             responsive: true,
+            aspectRatio: 16/6,
             plugins: {
               legend: {
                 labels: {
@@ -171,7 +177,8 @@
                 grid: {
                   color: "#aaaaaa"
                 },
-                suggestedMin: 0
+                suggestedMin: 0,
+                suggestedMax: 30
               },
               'B': {
                 type: 'linear',
@@ -179,21 +186,21 @@
                 title: {
                   display: true,
                   text: 'Humidity (%)',
-                  color: 'rgba(104, 221, 123, 1)',
+                  color: humidityColor,
                 },
                 min: 0,
                 max: 100,
                 ticks: {
-                  color: 'rgba(104, 221, 123, 1)',
+                  color: humidityColor,
                 },
                 grid: {
-                  color: "#aaaaaa"
+                  drawOnChartArea: false,
+                  color: humidityColor
                 },
               },
               x: {
                 title: {
                   display: true,
-                  text: 'Time',
                   color: "#ffffff"
                 },
                 ticks: {
@@ -219,6 +226,8 @@
     float: left;
   }
   */
+  #temperatureChart {
+  }
   body {
     background-color: #333333;
     color: #ffffff;
