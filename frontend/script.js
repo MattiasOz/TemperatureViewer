@@ -1,5 +1,5 @@
 // EDITABLE VARIABLES
-const backendUrl = "http://192.168.0.212:3000/entries";
+const backendUrl = 'http://' + window.location.hostname + ':3000/entries';
 const updateIntervalSec = 60;
 // ==================
 
