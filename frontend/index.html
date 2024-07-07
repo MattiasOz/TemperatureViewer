@@ -81,10 +81,17 @@
         // Will display time in 10:30:23 format
         var formattedTime = `${date.getFullYear()}/${date.getMonth()}/${date.getDate()} ${date.getHours()}:${('0'+date.getMinutes()).substr(-2)}`;
 
-        tableRow.insertCell().appendChild(document.createTextNode(`${formattedTime}`));
-        tableRow.insertCell().appendChild(document.createTextNode(`${entry.temperature.toFixed(1)} ℃`));
-        tableRow.insertCell().appendChild(document.createTextNode(`${entry.humidity.toFixed(1)}%`));
-        tableRow.insertCell().appendChild(document.createTextNode(`${entry.perceived_temperature.toFixed(1)} ℃`));
+        try {
+          tableRow.insertCell().appendChild(document.createTextNode(`${formattedTime}`));
+          tableRow.insertCell().appendChild(document.createTextNode(`${entry.temperature.substr(0,4)} ℃`));
+          tableRow.insertCell().appendChild(document.createTextNode(`${entry.humidity.substr(0,4)}%`));
+          tableRow.insertCell().appendChild(document.createTextNode(`${entry.perceived_temperature.substr(0,4)} ℃`));
+        } catch (e) {
+          tableRow.insertCell().appendChild(document.createTextNode(`${formattedTime}`));
+          tableRow.insertCell().appendChild(document.createTextNode(`${entry.temperature.toFixed(1)} ℃`));
+          tableRow.insertCell().appendChild(document.createTextNode(`${entry.humidity.toFixed(1)}%`));
+          tableRow.insertCell().appendChild(document.createTextNode(`${entry.perceived_temperature.toFixed(1)} ℃`));
+        }
 
       } catch (e) {
         console.log("Skipping entry due to:\n" + e);
